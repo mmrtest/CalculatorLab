@@ -73,6 +73,15 @@ namespace CPE200Lab1
                     //if(root%1!=0) { n++; }
                     ans = ans.Substring(0, n);
                     return ans;
+                case "1/x":
+                    double dividebyx = 1/Convert.ToDouble(firstOperand);
+                    string answ = Convert.ToString(dividebyx);
+                    int i = answ.Length;
+                    if (i > 8) { n = 8; }
+                    //if(root%1!=0) { n++; }
+                    answ = answ.Substring(0, i);
+                    return answ;
+
             }
             return "E";
         }
@@ -152,6 +161,16 @@ namespace CPE200Lab1
                     }
                     result = calculate("√", result, "0");
                 }
+                else if (((Button)sender).Text == "1/x")
+                {
+                    result = firstOperand;
+                    if (isAfterOperater == false)
+                    {
+                        result = calculate(operate, firstOperand, secondOperand);
+
+                    }
+                    result = calculate("1/x", result, "0");
+                }
                 else
                 {
                     result = calculate(operate, firstOperand, secondOperand);
@@ -172,9 +191,9 @@ namespace CPE200Lab1
                     operate = ((Button)sender).Text;
                     
                 }
-               
+
                 
-                
+
                 return;
             }
             else
@@ -194,6 +213,10 @@ namespace CPE200Lab1
                     case "√":
                         string result = calculate("√", lblDisplay.Text, "0");
                         lblDisplay.Text = result;
+                        break;
+                    case "1/x":
+                        string dividebyx = calculate("1/x", lblDisplay.Text, "0");
+                        lblDisplay.Text = dividebyx;
                         break;
                 }
             }
@@ -299,6 +322,14 @@ namespace CPE200Lab1
                     lblDisplay.Text = "0";
                 }
             }
+        }
+
+        private string Memory = null;
+        //private string operate;
+
+        private void Memory_click(object sender, EventArgs e)
+        {
+
         }
     }
 }
