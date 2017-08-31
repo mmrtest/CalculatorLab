@@ -12,20 +12,21 @@ namespace CPE200Lab1
 {
     public partial class MainForm : Form
     {
-        private bool hasDot;
+        private bool containDot;
         private bool isAllowBack;
         private bool isAfterOperater;
         private bool isAfterEqual;
-        private string firstOperand;
+        private string firstOperand = null;
         private string operate;
 
         private void resetAll()
         {
             lblDisplay.Text = "0";
             isAllowBack = true;
-            hasDot = false;
+            containDot = false;
             isAfterOperater = false;
             isAfterEqual = false;
+            firstOperand = null;
         }
 
         private string calculate(string operate, string firstOperand, string secondOperand, int maxOutputSize = 8)
@@ -61,8 +62,17 @@ namespace CPE200Lab1
                     }
                     break;
                 case "%":
-                    //your code here
-                    break;
+                    double second = Convert.ToDouble(firstOperand) * (Convert.ToDouble(secondOperand)/100);
+                    
+                    return Convert.ToString(second);
+                case "√":
+                    double root = Math.Sqrt(Convert.ToDouble(firstOperand));
+                    string ans = Convert.ToString(root);
+                    int n = ans.Length;
+                    if (n > 8) { n = 8; }
+                    //if(root%1!=0) { n++; }
+                    ans = ans.Substring(0, n);
+                    return ans;
             }
             return "E";
         }
@@ -104,29 +114,92 @@ namespace CPE200Lab1
 
         private void btnOperator_Click(object sender, EventArgs e)
         {
+            
             if (lblDisplay.Text is "Error")
             {
                 return;
             }
+            
             if (isAfterOperater)
             {
+                if (((Button)sender).Text == "+" || ((Button)sender).Text == "-" || ((Button)sender).Text == "*" || ((Button)sender).Text == "/" || ((Button)sender).Text == "%")
+                {
+                    return;
+                }
+                
+            }
+            if (isAfterEqual)
+            {
+                resetAll();
+            }
+            if (firstOperand != null)
+            {
+                string secondOperand = lblDisplay.Text;
+                string result;
+                if (((Button)sender).Text == "%")
+                {
+                    secondOperand = calculate("%", firstOperand, secondOperand);
+                    result = calculate(operate, firstOperand, secondOperand);
+                    
+                }
+                else if (((Button)sender).Text == "√")
+                {
+                    result = firstOperand;
+                    if (isAfterOperater==false)
+                    {
+                        result = calculate(operate, firstOperand, secondOperand);
+                        
+                    }
+                    result = calculate("√", result, "0");
+                }
+                else
+                {
+                    result = calculate(operate, firstOperand, secondOperand);
+                    
+                }
+                if (result is "E" || result.Length > 8)
+                {
+                    lblDisplay.Text = "Error";
+                }
+                else
+                {
+                    lblDisplay.Text = result;
+                }
+                firstOperand = result;
+                isAfterOperater = true;
+                if (((Button)sender).Text == "+" || ((Button)sender).Text == "-" || ((Button)sender).Text == "*" || ((Button)sender).Text == "/")
+                {
+                    operate = ((Button)sender).Text;
+                    
+                }
+               
+                
+                
                 return;
             }
-            operate = ((Button)sender).Text;
-            switch (operate)
+            else
             {
-                case "+":
-                case "-":
-                case "X":
-                case "÷":
-                    firstOperand = lblDisplay.Text;
-                    isAfterOperater = true;
-                    break;
-                case "%":
-                    // your code here
-                    break;
+                operate = ((Button)sender).Text;
+                switch (operate)
+                {
+                    case "+":
+                    case "-":
+                    case "X":
+                    case "÷":
+                        firstOperand = lblDisplay.Text;
+                        isAfterOperater = true;
+                        break;
+                    case "%":     
+                        break;
+                    case "√":
+                        string result = calculate("√", lblDisplay.Text, "0");
+                        lblDisplay.Text = result;
+                        break;
+                }
             }
+            
             isAllowBack = false;
+
         }
 
         private void btnEqual_Click(object sender, EventArgs e)
@@ -162,10 +235,10 @@ namespace CPE200Lab1
             {
                 return;
             }
-            if (!hasDot)
+            if (!containDot)
             {
                 lblDisplay.Text += ".";
-                hasDot = true;
+                containDot = true;
             }
         }
 
@@ -218,7 +291,7 @@ namespace CPE200Lab1
                 char rightMost = current[current.Length - 1];
                 if(rightMost is '.')
                 {
-                    hasDot = false;
+                    containDot = false;
                 }
                 lblDisplay.Text = current.Substring(0, current.Length - 1);
                 if(lblDisplay.Text is "" || lblDisplay.Text is "-")
