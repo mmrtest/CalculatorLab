@@ -191,7 +191,7 @@ namespace CPE200Lab1
                     operate = ((Button)sender).Text;
 
                 }
-
+                
 
 
                 return;
